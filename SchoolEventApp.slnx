@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="OrganizerWindow.xaml" />
+    <File Path="OrganizerWindow.xaml.cs" />
+    <File Path="PrintPreviewWindow.xaml" />
+    <File Path="PrintPreviewWindow.xaml.cs" />
+  </Folder>
+  <Project Path="SchoolEventApp.csproj" />
+</Solution>

@@ -1,0 +1,384 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Переопределяем системные цвета выделения DataGrid -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"         Color="#C8CEF0"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"     Color="#0F1117"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="#C8CEF0"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0F1117"/>
+
+    <!-- ЦВЕТА -->
+    <Color x:Key="Ink900">#0F1117</Color>
+    <Color x:Key="Ink700">#2D3142</Color>
+    <Color x:Key="Ink500">#6B7280</Color>
+    <Color x:Key="Ink300">#B0B8C8</Color>
+    <Color x:Key="Ink100">#E8EBF0</Color>
+    <Color x:Key="Ink50">#F5F6F8</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Accent">#4F5D9E</Color>
+    <Color x:Key="AccentLight">#EEF0FA</Color>
+    <Color x:Key="AccentDark">#3A4580</Color>
+    <Color x:Key="Danger">#B03A2E</Color>
+    <Color x:Key="DangerLight">#FCECEA</Color>
+
+    <SolidColorBrush x:Key="Ink900Brush"      Color="{StaticResource Ink900}"/>
+    <SolidColorBrush x:Key="Ink700Brush"      Color="{StaticResource Ink700}"/>
+    <SolidColorBrush x:Key="Ink500Brush"      Color="{StaticResource Ink500}"/>
+    <SolidColorBrush x:Key="Ink300Brush"      Color="{StaticResource Ink300}"/>
+    <SolidColorBrush x:Key="Ink100Brush"      Color="{StaticResource Ink100}"/>
+    <SolidColorBrush x:Key="Ink50Brush"       Color="{StaticResource Ink50}"/>
+    <SolidColorBrush x:Key="WhiteBrush"       Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="AccentBrush"      Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="AccentLightBrush" Color="{StaticResource AccentLight}"/>
+    <SolidColorBrush x:Key="AccentDarkBrush"  Color="{StaticResource AccentDark}"/>
+    <SolidColorBrush x:Key="DangerBrush"      Color="{StaticResource Danger}"/>
+    <SolidColorBrush x:Key="DangerLightBrush" Color="{StaticResource DangerLight}"/>
+
+    <!-- Алиасы для совместимости -->
+    <SolidColorBrush x:Key="PrimaryBrush"      Color="{StaticResource Ink700}"/>
+    <SolidColorBrush x:Key="AccentBlueBrush"   Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="AccentGreenBrush"  Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="AccentOrangeBrush" Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="AccentRedBrush"    Color="{StaticResource Danger}"/>
+    <SolidColorBrush x:Key="AccentPurpleBrush" Color="{StaticResource Accent}"/>
+
+    <!-- ══════════════════════════════════════════════
+         КНОПКИ
+         ══════════════════════════════════════════════ -->
+
+    <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Background"      Value="{StaticResource Ink700Brush}"/>
+        <Setter Property="Foreground"      Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding"         Value="18,9"/>
+        <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Cursor"          Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            CornerRadius="5" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentDarkBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource Ink900Brush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource Ink300Brush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+        <Setter Property="Background"      Value="White"/>
+        <Setter Property="Foreground"      Value="{StaticResource Ink700Brush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Ink300Brush}"/>
+        <Setter Property="Padding"         Value="16,8"/>
+        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Cursor"          Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource Ink50Brush}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Ink500Brush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource Ink100Brush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DangerButtonStyle" TargetType="Button">
+        <Setter Property="Background"      Value="White"/>
+        <Setter Property="Foreground"      Value="{StaticResource DangerBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush"     Value="#DEC8C5"/>
+        <Setter Property="Padding"         Value="16,8"/>
+        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="Cursor"          Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource DangerLightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#F5D7D4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Алиасы кнопок -->
+    <Style x:Key="BaseButtonStyle"   TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}"/>
+    <Style x:Key="SaveButtonStyle"   TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}"/>
+    <Style x:Key="CancelButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}"/>
+    <Style x:Key="ClearButtonStyle"  TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}"/>
+
+    <!-- ══════════════════════════════════════════════
+         БОКОВОЕ МЕНЮ
+         ══════════════════════════════════════════════ -->
+
+    <Style x:Key="NavButtonStyle" TargetType="Button">
+        <Setter Property="Background"                 Value="Transparent"/>
+        <Setter Property="Foreground"                 Value="#C0C6D8"/>
+        <Setter Property="BorderThickness"            Value="0"/>
+        <Setter Property="Padding"                    Value="14,10"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="FontFamily"                 Value="Segoe UI"/>
+        <Setter Property="FontSize"                   Value="13.5"/>
+        <Setter Property="Cursor"                     Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            CornerRadius="6" Margin="6,1">
+                        <ContentPresenter HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#3A4158"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NavButtonActiveStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════
+         ПОЛЯ ВВОДА — без кастомного шаблона
+         ══════════════════════════════════════════════ -->
+
+    <Style x:Key="InputStyle" TargetType="TextBox">
+        <Setter Property="Background"               Value="White"/>
+        <Setter Property="Foreground"               Value="#0F1117"/>
+        <Setter Property="CaretBrush"               Value="#0F1117"/>
+        <Setter Property="BorderBrush"              Value="#B0B8C8"/>
+        <Setter Property="BorderThickness"          Value="1"/>
+        <Setter Property="Padding"                  Value="10,8"/>
+        <Setter Property="FontFamily"               Value="Segoe UI"/>
+        <Setter Property="FontSize"                 Value="13"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="FieldBoxStyle"      TargetType="TextBox" BasedOn="{StaticResource InputStyle}"/>
+    <Style x:Key="ReadOnlyFieldStyle" TargetType="TextBox" BasedOn="{StaticResource InputStyle}">
+        <Setter Property="IsReadOnly"  Value="True"/>
+        <Setter Property="Background"  Value="{StaticResource Ink50Brush}"/>
+        <Setter Property="Foreground"  Value="{StaticResource Ink500Brush}"/>
+    </Style>
+    <Style x:Key="SearchBoxStyle" TargetType="TextBox" BasedOn="{StaticResource InputStyle}">
+        <Setter Property="Width"  Value="280"/>
+        <Setter Property="Height" Value="34"/>
+    </Style>
+
+    <Style x:Key="FieldDateStyle" TargetType="DatePicker">
+        <Setter Property="Padding"         Value="6,6"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="BorderBrush"     Value="#B0B8C8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily"      Value="Segoe UI"/>
+    </Style>
+
+    <Style x:Key="FieldComboStyle" TargetType="ComboBox">
+        <Setter Property="Padding"         Value="10,7"/>
+        <Setter Property="FontSize"        Value="13"/>
+        <Setter Property="BorderBrush"     Value="#B0B8C8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="Background"      Value="White"/>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════
+         МЕТКИ И ОШИБКИ
+         ══════════════════════════════════════════════ -->
+
+    <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily"  Value="Segoe UI Semibold"/>
+        <Setter Property="FontSize"    Value="11"/>
+        <Setter Property="Foreground"  Value="{StaticResource Ink500Brush}"/>
+        <Setter Property="Margin"      Value="0,12,0,4"/>
+    </Style>
+
+    <Style x:Key="ErrorTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground"   Value="{StaticResource DangerBrush}"/>
+        <Setter Property="FontSize"     Value="12"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Margin"       Value="0,8,0,0"/>
+        <Setter Property="FontFamily"   Value="Segoe UI"/>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════
+         ЗАГОЛОВОК И ПАНЕЛИ ФОРМЫ
+         ══════════════════════════════════════════════ -->
+
+    <Style x:Key="FormHeaderStyle" TargetType="Border">
+        <Setter Property="Background"      Value="White"/>
+        <Setter Property="Padding"         Value="28,20,28,16"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Ink100Brush}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    </Style>
+
+    <Style x:Key="FormHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground"        Value="{StaticResource Ink900Brush}"/>
+        <Setter Property="FontFamily"        Value="Segoe UI Semibold"/>
+        <Setter Property="FontSize"          Value="17"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="ActionPanelStyle" TargetType="Border">
+        <Setter Property="Background"      Value="{StaticResource Ink50Brush}"/>
+        <Setter Property="Padding"         Value="28,14"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Ink100Brush}"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════
+         КАРТОЧКИ ДАШБОРДА
+         ══════════════════════════════════════════════ -->
+
+    <Style x:Key="StatCardStyle" TargetType="Border">
+        <Setter Property="Background"      Value="White"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Ink100Brush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius"    Value="8"/>
+        <Setter Property="Padding"         Value="20,16"/>
+        <Setter Property="Margin"          Value="0,0,12,0"/>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════
+         ТАБЛИЦЫ
+         ══════════════════════════════════════════════ -->
+
+    <Style TargetType="DataGrid">
+        <Setter Property="SelectionMode"          Value="Single"/>
+        <Setter Property="SelectionUnit"          Value="FullRow"/>
+        <Setter Property="CanUserResizeRows"       Value="False"/>
+        <Setter Property="GridLinesVisibility"     Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#E8EBF0"/>
+        <Setter Property="BorderThickness"        Value="0"/>
+        <Setter Property="RowBackground"          Value="White"/>
+        <Setter Property="AlternatingRowBackground" Value="#F5F6F8"/>
+        <Setter Property="FontFamily"             Value="Segoe UI"/>
+        <Setter Property="FontSize"               Value="13"/>
+        <Setter Property="RowHeight"              Value="40"/>
+        <Setter Property="Background"             Value="White"/>
+    </Style>
+
+    <Style TargetType="DataGridColumnHeader">
+        <Setter Property="Background"      Value="{StaticResource Ink50Brush}"/>
+        <Setter Property="Foreground"      Value="{StaticResource Ink500Brush}"/>
+        <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
+        <Setter Property="FontSize"        Value="11"/>
+        <Setter Property="Padding"         Value="12,10"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource Ink100Brush}"/>
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        <Setter Property="Height"          Value="36"/>
+    </Style>
+
+    <Style TargetType="DataGridRow">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="ValidationErrorTemplate" Value="{x:Null}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#E8EBF8"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="#C8CEF0"/>
+                <Setter Property="Foreground" Value="#0F1117"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="DataGridCell">
+        <Setter Property="BorderThickness"  Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Background"       Value="Transparent"/>
+        <Setter Property="Foreground"       Value="{StaticResource Ink700Brush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background"      Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Foreground"      Value="#0F1117"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Чип фильтра по типу -->
+    <Style x:Key="FilterChipStyle" TargetType="ToggleButton">
+        <Setter Property="Height"          Value="26"/>
+        <Setter Property="Padding"         Value="12,0"/>
+        <Setter Property="Margin"          Value="0,0,5,0"/>
+        <Setter Property="Cursor"          Value="Hand"/>
+        <Setter Property="FontSize"        Value="11"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush"     Value="#D1D5DB"/>
+        <Setter Property="Background"      Value="#F9FAFB"/>
+        <Setter Property="Foreground"      Value="#4B5563"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="13" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="bd" Property="Background"  Value="#374151"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="#374151"/>
+                            <Setter Property="Foreground"                  Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#E5E7EB"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

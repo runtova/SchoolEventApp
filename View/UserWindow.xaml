@@ -1,0 +1,413 @@
+<Window x:Class="SchoolEventApp.UserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="School Event — Личный кабинет" Height="620" Width="960"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+
+    <Window.Resources>
+
+        <!-- Чипы фильтра -->
+        <Style x:Key="ChipStyle" TargetType="ToggleButton">
+            <Setter Property="Height"          Value="26"/>
+            <Setter Property="Padding"         Value="12,0"/>
+            <Setter Property="Margin"          Value="0,0,5,0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#CCDDD6"/>
+            <Setter Property="Background"      Value="#F4FAF7"/>
+            <Setter Property="Foreground"      Value="#4A7A65"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="13" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="bd" Property="Background"  Value="#1e5943"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#1e5943"/>
+                                <Setter Property="Foreground"                  Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#D6EDE5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Выделение строк — предстоящие -->
+        <Style x:Key="UpcomingRowStyle" TargetType="DataGridRow">
+            <Setter Property="Height"     Value="32"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#C8E6D8"/>
+                    <Setter Property="Foreground" Value="#0F3D2B"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#EAF5EF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Ячейки предстоящих — убираем системный синий -->
+        <Style x:Key="UpcomingCellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#C8E6D8"/>
+                    <Setter Property="Foreground" Value="#0F3D2B"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Выделение строк — прошедшие -->
+        <Style x:Key="PastRowStyle" TargetType="DataGridRow">
+            <Setter Property="Height"     Value="32"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#D8EDE5"/>
+                    <Setter Property="Foreground" Value="#2D4A3E"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F1F8F5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Ячейки прошедших — убираем системный синий -->
+        <Style x:Key="PastCellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#D8EDE5"/>
+                    <Setter Property="Foreground" Value="#2D4A3E"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль вкладок -->
+        <Style TargetType="TabItem">
+            <Setter Property="Padding"         Value="18,9"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground"      Value="#6A9B88"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="bd" Padding="{TemplateBinding Padding}"
+                                BorderThickness="0,0,0,2"
+                                BorderBrush="Transparent"
+                                Background="Transparent">
+                            <ContentPresenter ContentSource="Header"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#1e5943"/>
+                                <Setter Property="Foreground"                  Value="#1e5943"/>
+                                <Setter Property="FontWeight"                  Value="SemiBold"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="#1e5943"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Кнопка «Записаться» -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background"      Value="#1e5943"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Padding"         Value="18,7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#174838"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Кнопка «Отменить запись» -->
+        <Style x:Key="GhostDangerButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#C0392B"/>
+            <Setter Property="BorderBrush"     Value="#F5C6C2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Padding"         Value="14,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#FEF2F1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ══ ШАПКА ══ -->
+        <Border Grid.Row="0" Background="#1e5943">
+            <DockPanel Height="50" Margin="20,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            DockPanel.Dock="Left" Margin="0,0,0,0">
+                    <Ellipse Width="8" Height="8" Fill="#6EDBB0" Margin="0,0,8,0"
+                             VerticalAlignment="Center"/>
+                    <TextBlock Text="School Event" Foreground="White"
+                               FontSize="15" FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="  Личный кабинет" Foreground="#A8D5C2"
+                               FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            HorizontalAlignment="Right" DockPanel.Dock="Right">
+                    <Border Background="Transparent" CornerRadius="12"
+                            Padding="10,4" Margin="0,0,10,0">
+                        <TextBlock x:Name="tbCurrentUser" Foreground="#A8D5C2"
+                                   FontSize="12" VerticalAlignment="Center"/>
+                    </Border>
+                    <Button Content="Выйти" Click="Logout_Click"
+                            Style="{StaticResource GhostDangerButton}"
+                            Foreground="#A8D5C2" BorderBrush="#4A8A70"
+                            FontSize="12" VerticalAlignment="Center"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ══ КОНТЕНТ ══ -->
+        <TabControl Grid.Row="1" BorderThickness="0" Background="#F4FAF7">
+
+            <!-- ДОСТУПНЫЕ МЕРОПРИЯТИЯ -->
+            <TabItem Header="Доступные мероприятия">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Тулбар: поиск + чипы + кнопка -->
+                    <Border Grid.Row="0" Background="#F4FAF7"
+                            BorderBrush="#D6EDE5" BorderThickness="0,0,0,1"
+                            Padding="14,9">
+                        <DockPanel>
+                            <!-- Поиск -->
+                            <Border BorderBrush="#CCDDD6" BorderThickness="1"
+                                    CornerRadius="6" Background="White"
+                                    Padding="8,0" Width="220" Height="30"
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Left">
+                                <TextBox x:Name="tbSearchEvent"
+                                         BorderThickness="0" FontSize="12"
+                                         VerticalContentAlignment="Center"
+                                         Background="Transparent"
+                                         Foreground="#2D3748"
+                                         TextChanged="tbSearchEvent_TextChanged"/>
+                            </Border>
+                            <Button Content="✕" Click="ClearSearch_Click"
+                                    Background="Transparent" BorderThickness="0"
+                                    FontSize="11" Foreground="#8AA89A"
+                                    Cursor="Hand" Padding="6,4" Margin="4,0,12,0"
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Left"/>
+
+                            <!-- Кнопка Записаться -->
+                            <Button Content="Записаться" Click="Register_Click"
+                                    Style="{StaticResource PrimaryButton}"
+                                    DockPanel.Dock="Right" VerticalAlignment="Center"/>
+
+                            <!-- Чипы -->
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center" Margin="4,0,10,0">
+                                <TextBlock Text="Тип:" FontSize="11"
+                                           Foreground="#8AA89A"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,8,0"/>
+                                <ToggleButton x:Name="chipAll"   Content="Все"
+                                              Style="{StaticResource ChipStyle}"
+                                              IsChecked="True" Click="Chip_Click" Tag=""/>
+                                <ToggleButton x:Name="chipEdu"   Content="Образовательное"
+                                              Style="{StaticResource ChipStyle}"
+                                              Click="Chip_Click" Tag="образ"/>
+                                <ToggleButton x:Name="chipSport" Content="Спортивное"
+                                              Style="{StaticResource ChipStyle}"
+                                              Click="Chip_Click" Tag="спорт"/>
+                                <ToggleButton x:Name="chipCult"  Content="Культурное"
+                                              Style="{StaticResource ChipStyle}"
+                                              Click="Chip_Click" Tag="культ"/>
+                                <ToggleButton x:Name="chipSoc"   Content="Социальное"
+                                              Style="{StaticResource ChipStyle}"
+                                              Click="Chip_Click" Tag="соц"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Карточки -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Background="#F4FAF7">
+                        <WrapPanel x:Name="wpEvents"
+                                   Margin="10,10,10,10"
+                                   Orientation="Horizontal"/>
+                    </ScrollViewer>
+
+                    <!-- Статусбар -->
+                    <Border Grid.Row="2" Background="#F4FAF7"
+                            BorderBrush="#D6EDE5" BorderThickness="0,1,0,0"
+                            Padding="14,6">
+                        <TextBlock x:Name="tbEventCount"
+                                   FontSize="11" Foreground="#8AA89A"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- МОИ ЗАПИСИ -->
+            <TabItem Header="Мои записи">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="White">
+                    <StackPanel Margin="18">
+
+                        <!-- Предстоящие -->
+                        <DockPanel Margin="0,0,0,10">
+                            <TextBlock Text="Предстоящие мероприятия"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       Foreground="#1e5943" VerticalAlignment="Center"
+                                       DockPanel.Dock="Left"/>
+                            <Button Content="Отменить запись" Click="Unregister_Click"
+                                    Style="{StaticResource GhostDangerButton}"
+                                    DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+                        </DockPanel>
+
+                        <DataGrid x:Name="dgMyEvents"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  AlternatingRowBackground="#F7FBFA"
+                                  RowBackground="White"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E8F2EE"
+                                  CanUserResizeRows="False" SelectionMode="Single"
+                                  RowStyle="{StaticResource UpcomingRowStyle}"
+                                  CellStyle="{StaticResource UpcomingCellStyle}"
+                                  RowHeight="32" ColumnHeaderHeight="36"
+                                  BorderThickness="1" BorderBrush="#D6EDE5"
+                                  MaxHeight="280" Margin="0,0,0,4">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background"      Value="#1e5943"/>
+                                    <Setter Property="Foreground"      Value="White"/>
+                                    <Setter Property="FontWeight"      Value="SemiBold"/>
+                                    <Setter Property="FontSize"        Value="12"/>
+                                    <Setter Property="Padding"         Value="10,0"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"           Binding="{Binding RowNumber}"                       Width="45"/>
+                                <DataGridTextColumn Header="Мероприятие" Binding="{Binding event_name}"                      Width="*"/>
+                                <DataGridTextColumn Header="Дата"        Binding="{Binding date_e, StringFormat=dd.MM.yyyy}" Width="100"/>
+                                <DataGridTextColumn Header="Время"       Binding="{Binding time_e}"                          Width="80"/>
+                                <DataGridTextColumn Header="Место"       Binding="{Binding place}"                           Width="160"/>
+                                <DataGridTextColumn Header="Тип"         Binding="{Binding type_e}"                          Width="130"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock x:Name="tbMyCount" FontSize="11" Foreground="#8AA89A"
+                                   Margin="2,4,0,22"/>
+
+                        <!-- Прошедшие -->
+                        <TextBlock Text="Прошедшие в этом учебном году"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="#8AA89A" Margin="0,0,0,10"/>
+
+                        <DataGrid x:Name="dgMyPastEvents"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  AlternatingRowBackground="#FAFAFA"
+                                  RowBackground="White"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#EEEEEE"
+                                  CanUserResizeRows="False" SelectionMode="Single"
+                                  RowStyle="{StaticResource PastRowStyle}"
+                                  CellStyle="{StaticResource PastCellStyle}"
+                                  RowHeight="32" ColumnHeaderHeight="36"
+                                  BorderThickness="1" BorderBrush="#E0E0E0"
+                                  MaxHeight="280" Opacity="0.7"
+                                  IsHitTestVisible="False"
+                                  Margin="0,0,0,4">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background"      Value="#8AA89A"/>
+                                    <Setter Property="Foreground"      Value="White"/>
+                                    <Setter Property="FontWeight"      Value="SemiBold"/>
+                                    <Setter Property="FontSize"        Value="12"/>
+                                    <Setter Property="Padding"         Value="10,0"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"           Binding="{Binding RowNumber}"                       Width="45"/>
+                                <DataGridTextColumn Header="Мероприятие" Binding="{Binding event_name}"                      Width="*"/>
+                                <DataGridTextColumn Header="Дата"        Binding="{Binding date_e, StringFormat=dd.MM.yyyy}" Width="100"/>
+                                <DataGridTextColumn Header="Время"       Binding="{Binding time_e}"                          Width="80"/>
+                                <DataGridTextColumn Header="Место"       Binding="{Binding place}"                           Width="160"/>
+                                <DataGridTextColumn Header="Тип"         Binding="{Binding type_e}"                          Width="130"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock x:Name="tbMyPastCount" FontSize="11" Foreground="#8AA89A"
+                                   Margin="2,4,0,8"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>

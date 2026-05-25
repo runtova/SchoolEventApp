@@ -1,0 +1,275 @@
+<Window x:Class="SchoolEventApp.ReportsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="📋 Отчёты — School Event" Height="720" Width="1100"
+        WindowStartupLocation="CenterOwner" WindowState="Maximized">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <StackPanel Grid.Row="0" Background="#2C3E50" Height="52"
+                    Orientation="Horizontal">
+            <TextBlock Text="📋 Отчёты" Foreground="White" FontSize="20"
+                       FontWeight="Bold" VerticalAlignment="Center" Margin="15,0"/>
+            <TextBlock Text="Выберите отчёт, настройте фильтры и нажмите «Сформировать»"
+                       Foreground="#95A5A6" FontSize="12"
+                       VerticalAlignment="Center" Margin="15,0"/>
+        </StackPanel>
+
+        <TabControl Grid.Row="1" Margin="8">
+
+            <!-- ═══════════════════════════════════════════════
+                 ОТЧЁТ 1: Полный список мероприятий
+            ═══════════════════════════════════════════════ -->
+            <TabItem Header="📋 Все мероприятия">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Описание + кнопка -->
+                    <Border Grid.Row="0" Background="#EAF4FB"
+                            BorderBrush="#AED6F1" BorderThickness="0,0,0,1"
+                            Padding="14,10">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Left">
+                                <TextBlock Text="📋 Полный список всех мероприятий"
+                                           FontSize="14" FontWeight="Bold"
+                                           Foreground="#1A5276"/>
+                                <TextBlock Text="Содержит: название, дату, время, место, тип, организатора и количество участников"
+                                           FontSize="11" Foreground="#555" Margin="0,3,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <TextBlock Text="Учебный год:" VerticalAlignment="Center"
+                                               Margin="0,0,8,0" FontWeight="SemiBold" Foreground="#1A5276"/>
+                                    <ComboBox x:Name="cbYear1" Width="130"
+                                              SelectionChanged="Year1_SelectionChanged"
+                                              VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Content="▶ Сформировать и открыть"
+                                    DockPanel.Dock="Right"
+                                    HorizontalAlignment="Right"
+                                    Click="Report1_Click"
+                                    Padding="18,8" FontSize="13"
+                                    Background="#2980B9" Foreground="White"
+                                    BorderThickness="0" Cursor="Hand"/>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Предпросмотр в гриде -->
+                    <DataGrid x:Name="dgReport1" Grid.Row="1"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              AlternatingRowBackground="#F0F8FF"
+                              GridLinesVisibility="Horizontal"
+                              CanUserResizeRows="False"
+                              RowHeight="30" ColumnHeaderHeight="34"
+                              BorderThickness="1" BorderBrush="#BDC3C7"
+                              Margin="5,5,5,0">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#1A5276"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="8,0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="№"           Binding="{Binding Nomer}"          Width="45"/>
+                            <DataGridTextColumn Header="Название"    Binding="{Binding Nazvanie}"        Width="180"/>
+                            <DataGridTextColumn Header="Дата"        Binding="{Binding Data}"            Width="90"/>
+                            <DataGridTextColumn Header="Время"       Binding="{Binding Vremya}"          Width="70"/>
+                            <DataGridTextColumn Header="Место"       Binding="{Binding Mesto}"           Width="130"/>
+                            <DataGridTextColumn Header="Тип"         Binding="{Binding Tip}"             Width="110"/>
+                            <DataGridTextColumn Header="Организатор" Binding="{Binding Organizator}"     Width="180"/>
+                            <DataGridTextColumn Header="Уч-ков"      Binding="{Binding KolUchastnikov}"  Width="65"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border Grid.Row="2" Background="#F4F6F8" Padding="10,5">
+                        <TextBlock x:Name="tbSummary1" FontSize="12" Foreground="#555"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ═══════════════════════════════════════════════
+                 ОТЧЁТ 2: Участники с фильтром
+            ═══════════════════════════════════════════════ -->
+            <TabItem Header="🔎 Участники по мероприятиям">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#F5EEF8"
+                            BorderBrush="#D2B4DE" BorderThickness="0,0,0,1"
+                            Padding="14,10">
+                        <StackPanel>
+                            <TextBlock Text="🔎 Список участников по мероприятиям"
+                                       FontSize="14" FontWeight="Bold" Foreground="#6C3483"/>
+                            <TextBlock Text="Фильтруйте по типу мероприятия и периоду дат, затем нажмите «Сформировать»"
+                                       FontSize="11" Foreground="#555" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Фильтры -->
+                    <Border Grid.Row="1" Background="#FDFEFE"
+                            BorderBrush="#D2B4DE" BorderThickness="0,0,0,1"
+                            Padding="14,10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Учебный год:" VerticalAlignment="Center"
+                                       Margin="0,0,6,0" FontWeight="SemiBold"/>
+                            <ComboBox x:Name="cbYear2" Width="130" Margin="0,0,16,0"
+                                      SelectionChanged="Year2_SelectionChanged"
+                                      VerticalContentAlignment="Center"/>
+
+                            <TextBlock Text="Дата с:" VerticalAlignment="Center"
+                                       Margin="0,0,6,0" FontWeight="SemiBold"/>
+                            <DatePicker x:Name="dpFrom" Width="130" Margin="0,0,14,0"/>
+
+                            <TextBlock Text="по:" VerticalAlignment="Center"
+                                       Margin="0,0,6,0" FontWeight="SemiBold"/>
+                            <DatePicker x:Name="dpTo" Width="130" Margin="0,0,14,0"/>
+
+                            <TextBlock Text="Тип:" VerticalAlignment="Center"
+                                       Margin="0,0,6,0" FontWeight="SemiBold"/>
+                            <ComboBox x:Name="cbType" Width="160" Margin="0,0,14,0"
+                                      VerticalContentAlignment="Center"/>
+
+                            <Button Content="🔍 Применить фильтр"
+                                    Click="ApplyFilter2_Click"
+                                    Padding="12,6" Margin="0,0,8,0"
+                                    Background="#6C3483" Foreground="White"
+                                    BorderThickness="0" Cursor="Hand"/>
+
+                            <Button Content="✖ Сбросить"
+                                    Click="ResetFilter2_Click"
+                                    Padding="10,6" Margin="0,0,20,0"
+                                    Cursor="Hand"/>
+
+                            <Button Content="▶ Сформировать и открыть"
+                                    Click="Report2_Click"
+                                    Padding="16,6"
+                                    Background="#8E44AD" Foreground="White"
+                                    BorderThickness="0" FontSize="13"
+                                    Cursor="Hand"/>
+                        </StackPanel>
+                    </Border>
+
+                    <DataGrid x:Name="dgReport2" Grid.Row="2"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              AlternatingRowBackground="#FDF5FF"
+                              GridLinesVisibility="Horizontal"
+                              CanUserResizeRows="False"
+                              RowHeight="30" ColumnHeaderHeight="34"
+                              BorderThickness="1" BorderBrush="#BDC3C7"
+                              Margin="5,5,5,0">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#6C3483"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="8,0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Мероприятие"  Binding="{Binding Meropriyatie}" Width="180"/>
+                            <DataGridTextColumn Header="Дата"         Binding="{Binding Data}"          Width="90"/>
+                            <DataGridTextColumn Header="Тип"          Binding="{Binding Tip}"           Width="110"/>
+                            <DataGridTextColumn Header="Место"        Binding="{Binding Mesto}"         Width="120"/>
+                            <DataGridTextColumn Header="Организатор"  Binding="{Binding Organizator}"   Width="160"/>
+                            <DataGridTextColumn Header="Участник"     Binding="{Binding Uchastnik}"     Width="175"/>
+                            <DataGridTextColumn Header="Класс"        Binding="{Binding Klass}"         Width="65"/>
+                            <DataGridTextColumn Header="Телефон"      Binding="{Binding Telefon}"       Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border Grid.Row="3" Background="#F4F6F8" Padding="10,5">
+                        <TextBlock x:Name="tbSummary2" FontSize="12" Foreground="#555"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ═══════════════════════════════════════════════
+                 ОТЧЁТ 3: Рейтинг активности
+            ═══════════════════════════════════════════════ -->
+            <TabItem Header="📈 Рейтинг участников">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#EAFAF1"
+                            BorderBrush="#A9DFBF" BorderThickness="0,0,0,1"
+                            Padding="14,10">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Left">
+                                <TextBlock Text="📈 Рейтинг активности участников"
+                                           FontSize="14" FontWeight="Bold"
+                                           Foreground="#1A6B3C"/>
+                                <TextBlock Text="Показывает кто больше всего посетил мероприятий — с датами первого и последнего участия"
+                                           FontSize="11" Foreground="#555" Margin="0,3,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <TextBlock Text="Учебный год:" VerticalAlignment="Center"
+                                               Margin="0,0,8,0" FontWeight="SemiBold" Foreground="#1A6B3C"/>
+                                    <ComboBox x:Name="cbYear3" Width="130"
+                                              SelectionChanged="Year3_SelectionChanged"
+                                              VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Content="▶ Сформировать и открыть"
+                                    DockPanel.Dock="Right"
+                                    HorizontalAlignment="Right"
+                                    Click="Report3_Click"
+                                    Padding="18,8" FontSize="13"
+                                    Background="#27AE60" Foreground="White"
+                                    BorderThickness="0" Cursor="Hand"/>
+                        </DockPanel>
+                    </Border>
+
+                    <DataGrid x:Name="dgReport3" Grid.Row="1"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              AlternatingRowBackground="#F0FFF4"
+                              GridLinesVisibility="Horizontal"
+                              CanUserResizeRows="False"
+                              RowHeight="30" ColumnHeaderHeight="34"
+                              BorderThickness="1" BorderBrush="#BDC3C7"
+                              Margin="5,5,5,0">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#1A6B3C"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="8,0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Место"          Binding="{Binding Mesto}"             Width="60"/>
+                            <DataGridTextColumn Header="Участник"       Binding="{Binding Uchastnik}"         Width="215"/>
+                            <DataGridTextColumn Header="Класс"          Binding="{Binding Klass}"             Width="65"/>
+                            <DataGridTextColumn Header="Email"          Binding="{Binding Email}"             Width="185"/>
+                            <DataGridTextColumn Header="Мер-тий"        Binding="{Binding KolMeropriyatiy}"   Width="80"/>
+                            <DataGridTextColumn Header="Первое участие" Binding="{Binding PervoeUchastie}"    Width="120"/>
+                            <DataGridTextColumn Header="Последнее"      Binding="{Binding PosledneeUchastie}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border Grid.Row="2" Background="#F4F6F8" Padding="10,5">
+                        <TextBlock x:Name="tbSummary3" FontSize="12" Foreground="#555"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>

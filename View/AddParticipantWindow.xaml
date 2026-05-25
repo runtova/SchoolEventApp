@@ -1,0 +1,100 @@
+<Window x:Class="SchoolEventApp.AddParticipantWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Участник"
+        WindowStartupLocation="CenterOwner"
+        WindowState="Normal"
+        ResizeMode="NoResize"
+        Width="480" SizeToContent="Height"
+        Background="White"
+        FontFamily="Segoe UI" FontSize="13">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/AppStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="White"
+          FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <Border Grid.Row="0" Style="{StaticResource FormHeaderStyle}">
+            <TextBlock x:Name="tbTitle" Text="Добавление участника"
+                       Style="{StaticResource FormHeaderTextStyle}"/>
+        </Border>
+
+        <!-- Поля -->
+        <StackPanel Grid.Row="1" Margin="28,16,28,8">
+
+            <StackPanel x:Name="panelCod" Visibility="Collapsed">
+                <TextBlock Text="КОД" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBox x:Name="tbCod" Style="{StaticResource ReadOnlyFieldStyle}"
+                         Height="36"/>
+            </StackPanel>
+
+            <TextBlock Text="ФИО" Style="{StaticResource FieldLabelStyle}"/>
+            <TextBox x:Name="tbFIO" Style="{StaticResource FieldBoxStyle}"
+                     Height="36"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="КЛАСС" Style="{StaticResource FieldLabelStyle}"/>
+                    <TextBox x:Name="tbClass" Style="{StaticResource FieldBoxStyle}"
+                             Height="36"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="ТЕЛЕФОН" Style="{StaticResource FieldLabelStyle}"/>
+                    <TextBox x:Name="tbPhone" Style="{StaticResource FieldBoxStyle}"
+                             Height="36"/>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="EMAIL" Style="{StaticResource FieldLabelStyle}"/>
+            <TextBox x:Name="tbEmail" Style="{StaticResource FieldBoxStyle}"
+                     Height="36"/>
+
+            <!-- Ошибка -->
+            <Border x:Name="borderError" Visibility="Collapsed"
+                    Background="#FCECEA" BorderBrush="#DEC0BD"
+                    BorderThickness="1" CornerRadius="5"
+                    Padding="12,8" Margin="0,12,0,0">
+                <TextBlock x:Name="tbError"
+                           Style="{StaticResource ErrorTextStyle}"
+                           Margin="0"/>
+            </Border>
+
+            <Rectangle Height="8"/>
+        </StackPanel>
+
+        <!-- Кнопки -->
+        <Border Grid.Row="2" Style="{StaticResource ActionPanelStyle}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Очистить"
+                        Click="Clear_Click"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Padding="16,9" Margin="0,0,8,0"/>
+                <Button Content="Отмена"
+                        Click="Cancel_Click"
+                        Style="{StaticResource CancelButtonStyle}"
+                        Padding="16,9" Margin="0,0,8,0"/>
+                <Button x:Name="btnSave" Content="Сохранить"
+                        Click="Save_Click"
+                        Style="{StaticResource SaveButtonStyle}"
+                        Padding="24,9"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

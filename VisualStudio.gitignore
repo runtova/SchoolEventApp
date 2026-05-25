@@ -1,0 +1,45 @@
+# Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+*.dll
+*.exe
+*.pdb
+*.log
+*.cache
+
+# SQL Server
+*.mdf
+*.ldf
+*.bak
+
+# Image cache
+SchoolEventImages/
+*.jpg
+*.png
+*.bmp
+
+# WebView2 cache
+WebView2Cache/
+
+# Temporary files
+*.tmp
+*.temp
+*_temp.*
+
+# User-specific files
+*.userprefs
+
+# VS Code
+.vscode/
+
+# Package references
+packages/
+
+# Publish output
+publish/

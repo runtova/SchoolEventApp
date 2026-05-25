@@ -1,0 +1,593 @@
+<Window x:Class="SchoolEventApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="School Event"
+        Height="700" Width="1100"
+        MinWidth="900" MinHeight="550"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        FontFamily="Segoe UI"
+        Background="#F5F6F8">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/AppStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Сайдбар -->
+            <ColumnDefinition Width="220"/>
+            <!-- Контент -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             БОКОВОЕ МЕНЮ
+             ═══════════════════════════════════════════════════════════ -->
+        <Border Grid.Column="0" Background="#2D3142">
+
+            <DockPanel>
+
+                <!-- Логотип -->
+                <Border DockPanel.Dock="Top" Padding="20,28,20,20"
+                        BorderBrush="#3A4158" BorderThickness="0,0,0,1">
+                    <StackPanel>
+                        <TextBlock Text="School Event" Foreground="White"
+                                   FontFamily="Segoe UI Semibold" FontSize="17"/>
+                        <TextBlock x:Name="tbConnectionStatus"
+                                   Foreground="#6B7C9A" FontSize="11"
+                                   Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Низ: пользователь + выход -->
+                <Border DockPanel.Dock="Bottom" Padding="16,16"
+                        BorderBrush="#3A4158" BorderThickness="0,1,0,0">
+                    <StackPanel>
+                        <TextBlock x:Name="tbCurrentUser"
+                                   Foreground="#8A94A8" FontSize="12"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="8,0,0,10"/>
+                        <Button Content="Выйти"
+                                Click="Logout_Click"
+                                Style="{StaticResource NavButtonStyle}"
+                                Foreground="#8A94A8"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Навигация -->
+                <StackPanel DockPanel.Dock="Top" Margin="0,12,0,0">
+
+                    <TextBlock Text="ДАННЫЕ" Foreground="#4A5270"
+                               FontSize="10" FontFamily="Segoe UI Semibold"
+                               Margin="20,8,0,4"/>
+
+                    <Button x:Name="btnNavOrganizers"
+                            Content="Организаторы"
+                            Style="{StaticResource NavButtonActiveStyle}"
+                            Click="NavOrganizers_Click"/>
+
+                    <Button x:Name="btnNavParticipants"
+                            Content="Участники"
+                            Style="{StaticResource NavButtonStyle}"
+                            Click="NavParticipants_Click"/>
+
+                    <Button x:Name="btnNavEvents"
+                            Content="Мероприятия"
+                            Style="{StaticResource NavButtonStyle}"
+                            Click="NavEvents_Click"/>
+
+                    <Button x:Name="btnNavParticipation"
+                            Content="Участие"
+                            Style="{StaticResource NavButtonStyle}"
+                            Click="NavParticipation_Click"/>
+
+                    <Button x:Name="btnNavArchive"
+                            Content="Архив"
+                            Style="{StaticResource NavButtonStyle}"
+                            Click="NavArchive_Click"/>
+
+                    <TextBlock Text="АНАЛИТИКА" Foreground="#4A5270"
+                               FontSize="10" FontFamily="Segoe UI Semibold"
+                               Margin="20,16,0,4"/>
+
+                    <Button x:Name="btnNavDashboard"
+                            Content="Дашборд"
+                            Style="{StaticResource NavButtonStyle}"
+                            Click="OpenDashboard_Click"/>
+
+                    <Button x:Name="btnNavReports"
+                            Content="Отчёты"
+                            Style="{StaticResource NavButtonStyle}"
+                            Click="OpenReports_Click"/>
+
+                    <!-- Секция администрирования — видна только администратору -->
+                    <StackPanel x:Name="spAdminSection" Visibility="Collapsed">
+                        <TextBlock Text="АДМИНИСТРИРОВАНИЕ" Foreground="#4A5270"
+                                   FontSize="10" FontFamily="Segoe UI Semibold"
+                                   Margin="20,16,0,4"/>
+
+                        <Button x:Name="btnNavBackup"
+                                Content="🗄  Резервная копия"
+                                Style="{StaticResource NavButtonStyle}"
+                                Click="OpenBackup_Click"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             ОСНОВНОЙ КОНТЕНТ
+             ═══════════════════════════════════════════════════════════ -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <!-- Заголовок страницы -->
+                <RowDefinition Height="Auto"/>
+                <!-- Контент вкладки -->
+                <RowDefinition Height="*"/>
+                <!-- Нижняя полоса -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Заголовок текущей секции -->
+            <Border Grid.Row="0" Background="White"
+                    BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                    Padding="28,18,28,18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="tbPageTitle"
+                               Text="Организаторы"
+                               FontFamily="Segoe UI Semibold"
+                               FontSize="20"
+                               Foreground="#0F1117"
+                               VerticalAlignment="Center"/>
+                    <!-- Кнопка «Обновить» справа -->
+                    <Button Grid.Column="1"
+                            Content="Обновить"
+                            Click="RefreshAll_Click"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Padding="14,7"/>
+                </Grid>
+            </Border>
+
+            <!-- ВКЛАДКИ (скрытые, переключаются через навигацию) -->
+            <TabControl x:Name="tcMain" Grid.Row="1"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        Padding="0">
+
+                <!-- Убираем заголовки вкладок через стиль -->
+                <TabControl.Style>
+                    <Style TargetType="TabControl">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabControl">
+                                    <!-- Только контент, без полоски вкладок -->
+                                    <ContentPresenter x:Name="PART_SelectedContentHost"
+                                                      ContentSource="SelectedContent"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Style>
+
+                <!-- ── ОРГАНИЗАТОРЫ ──────────────────────────────────── -->
+                <TabItem x:Name="tabOrganizers">
+                    <Grid Background="#F5F6F8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Панель инструментов -->
+                        <Border Grid.Row="0" Background="White"
+                                BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                                Padding="20,12">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="tbSearchOrganizer"
+                                         Style="{StaticResource SearchBoxStyle}"
+                                         Padding="10,7"
+                                         Tag="Поиск по ФИО, email..."
+                                         TextChanged="tbSearchOrganizer_TextChanged"/>
+                                <Button Content="Сброс"
+                                        Click="ClearOrganizersFilter_Click"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Margin="8,0,0,0" Padding="12,7"/>
+                                <Separator Width="1" Background="#E8EBF0"
+                                           Margin="16,0"/>
+                                <Button Content="Редактировать"
+                                        Click="EditOrganizer_Click"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Padding="14,7" Margin="0,0,8,0"/>
+                                <Button Content="Удалить"
+                                        Click="DeleteSelectedOrganizer_Click"
+                                        Style="{StaticResource DangerButtonStyle}"
+                                        Padding="14,7"/>
+                                <Button Content="+ Добавить"
+                                        Click="AddOrganizer_Click"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Margin="16,0,0,0" Padding="16,7"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Таблица -->
+                        <DataGrid x:Name="dgOrganizer" Grid.Row="1"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  BorderThickness="0"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E8EBF0"
+                                  CanUserResizeRows="False"
+                                  SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                                  Margin="0"
+                                  RowHeight="40"
+                                  MouseDoubleClick="dgOrganizer_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"         Binding="{Binding RowNumber}"      Width="50"/>
+                                <DataGridTextColumn Header="ФИО"       Binding="{Binding organizer_FIO}"  Width="2*"/>
+                                <DataGridTextColumn Header="Должность" Binding="{Binding job_name}"       Width="*"/>
+                                <DataGridTextColumn Header="Email"     Binding="{Binding email_0}"        Width="2*"/>
+                                <DataGridTextColumn Header="Телефон"   Binding="{Binding phone_number_o}" Width="130"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- ── УЧАСТНИКИ ─────────────────────────────────────── -->
+                <TabItem x:Name="tabParticipants">
+                    <Grid Background="#F5F6F8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="White"
+                                BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                                Padding="20,12">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="tbSearchParticipant"
+                                         Style="{StaticResource SearchBoxStyle}"
+                                         Padding="10,7"
+                                         TextChanged="tbSearchParticipant_TextChanged"/>
+                                <Button Content="Сброс"
+                                        Click="ClearParticipantsFilter_Click"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Margin="8,0,0,0" Padding="12,7"/>
+                                <Separator Width="1" Background="#E8EBF0"
+                                           Margin="16,0"/>
+                                <Button Content="Редактировать"
+                                        Click="EditParticipant_Click"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Padding="14,7" Margin="0,0,8,0"/>
+                                <Button Content="Удалить"
+                                        Click="DeleteSelectedParticipant_Click"
+                                        Style="{StaticResource DangerButtonStyle}"
+                                        Padding="14,7"/>
+                                <Button Content="+ Добавить"
+                                        Click="AddParticipant_Click"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Margin="16,0,0,0" Padding="16,7"/>
+                            </StackPanel>
+                        </Border>
+
+                        <DataGrid x:Name="dgParticipant" Grid.Row="1"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  BorderThickness="0"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E8EBF0"
+                                  CanUserResizeRows="False"
+                                  SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                                  RowHeight="40"
+                                  MouseDoubleClick="dgParticipant_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"       Binding="{Binding RowNumber}"     Width="50"/>
+                                <DataGridTextColumn Header="ФИО"     Binding="{Binding student_FIO}"   Width="2*"/>
+                                <DataGridTextColumn Header="Класс"   Binding="{Binding class}"          Width="80"/>
+                                <DataGridTextColumn Header="Email"   Binding="{Binding email_s}"        Width="2*"/>
+                                <DataGridTextColumn Header="Телефон" Binding="{Binding phone_number_s}" Width="130"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- ── МЕРОПРИЯТИЯ ───────────────────────────────────── -->
+                <TabItem x:Name="tabEvents">
+                    <Grid Background="#F5F6F8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="White"
+                                BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                                Padding="20,10">
+                            <StackPanel>
+                                <!-- Строка 1: поиск + кнопки -->
+                                <DockPanel Margin="0,0,0,8">
+                                    <TextBox x:Name="tbSearchEvent"
+                                             Style="{StaticResource SearchBoxStyle}"
+                                             Padding="10,7" Width="220"
+                                             DockPanel.Dock="Left"
+                                             TextChanged="tbSearchEvent_TextChanged"/>
+                                    <Button Content="Сброс"
+                                            Click="ClearEventsFilter_Click"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Margin="8,0,0,0" Padding="12,7"
+                                            DockPanel.Dock="Left"/>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                DockPanel.Dock="Right">
+                                        <Button Content="Редактировать"
+                                                Click="EditEvent_Click"
+                                                Style="{StaticResource SecondaryButtonStyle}"
+                                                Padding="14,7" Margin="0,0,8,0"/>
+                                        <Button Content="Удалить"
+                                                Click="DeleteSelectedEvent_Click"
+                                                Style="{StaticResource DangerButtonStyle}"
+                                                Padding="14,7"/>
+                                        <Button Content="+ Добавить"
+                                                Click="AddEvent_Click"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Margin="16,0,0,0" Padding="16,7"/>
+                                    </StackPanel>
+                                </DockPanel>
+
+                                <!-- Строка 2: фильтры -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <!-- Тип -->
+                                    <TextBlock Text="Тип:" FontSize="12"
+                                               Foreground="#9CA3AF"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,8,0"/>
+                                    <ToggleButton x:Name="evChipAll"   Content="Все"
+                                                  IsChecked="True"
+                                                  Click="EvChip_Click" Tag=""
+                                                  Style="{StaticResource FilterChipStyle}"/>
+                                    <ToggleButton x:Name="evChipEdu"   Content="Образовательное"
+                                                  Click="EvChip_Click" Tag="образ"
+                                                  Style="{StaticResource FilterChipStyle}"/>
+                                    <ToggleButton x:Name="evChipSport" Content="Спортивное"
+                                                  Click="EvChip_Click" Tag="спорт"
+                                                  Style="{StaticResource FilterChipStyle}"/>
+                                    <ToggleButton x:Name="evChipCult"  Content="Культурное"
+                                                  Click="EvChip_Click" Tag="культ"
+                                                  Style="{StaticResource FilterChipStyle}"/>
+                                    <ToggleButton x:Name="evChipSoc"   Content="Социальное"
+                                                  Click="EvChip_Click" Tag="соц"
+                                                  Style="{StaticResource FilterChipStyle}"/>
+
+                                    <Separator Width="1" Background="#E8EBF0" Margin="14,2"/>
+
+                                    <!-- Дата -->
+                                    <TextBlock Text="Дата с:" FontSize="12"
+                                               Foreground="#9CA3AF"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,6,0"/>
+                                    <DatePicker x:Name="dpEventFrom"
+                                                Width="120" FontSize="12"
+                                                SelectedDateChanged="EventDateFilter_Changed"/>
+                                    <TextBlock Text="по:" FontSize="12"
+                                               Foreground="#9CA3AF"
+                                               VerticalAlignment="Center"
+                                               Margin="10,0,6,0"/>
+                                    <DatePicker x:Name="dpEventTo"
+                                                Width="120" FontSize="12"
+                                                SelectedDateChanged="EventDateFilter_Changed"/>
+                                    <Button Content="✕" FontSize="11"
+                                            Foreground="#9CA3AF"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Cursor="Hand" Padding="6,4"
+                                            Margin="4,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Click="ClearDateFilter_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <DataGrid x:Name="dgEvent" Grid.Row="1"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  BorderThickness="0"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E8EBF0"
+                                  CanUserResizeRows="False"
+                                  SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                                  RowHeight="40"
+                                  MouseDoubleClick="dgEvent_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"           Binding="{Binding RowNumber}"                       Width="45"/>
+                                <DataGridTextColumn Header="Название"    Binding="{Binding event_name}"                      Width="2*"/>
+                                <DataGridTextColumn Header="Дата"        Binding="{Binding date_e, StringFormat=dd.MM.yyyy}" Width="95"/>
+                                <DataGridTextColumn Header="Время"       Binding="{Binding time_e}"                          Width="75"/>
+                                <DataGridTextColumn Header="Место"       Binding="{Binding place}"                           Width="*"/>
+                                <DataGridTextColumn Header="Организатор" Binding="{Binding organizer_FIO}"                   Width="1.5*"/>
+                                <DataGridTextColumn Header="Тип"         Binding="{Binding type_e}"                          Width="*"/>
+                                <DataGridTextColumn Header="Мест"        Binding="{Binding max_participants}"                Width="55"/>
+                                <DataGridTextColumn Header="Участников"  Binding="{Binding participants_count}"              Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- ── УЧАСТИЕ ───────────────────────────────────────── -->
+                <TabItem x:Name="tabParticipation">
+                    <Grid Background="#F5F6F8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="White"
+                                BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                                Padding="20,12">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="tbSearchParticipation"
+                                         Style="{StaticResource SearchBoxStyle}"
+                                         Padding="10,7"
+                                         TextChanged="tbSearchParticipation_TextChanged"/>
+                                <Button Content="Сброс"
+                                        Click="ClearParticipationFilter_Click"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Margin="8,0,0,0" Padding="12,7"/>
+                                <Separator Width="1" Background="#E8EBF0"
+                                           Margin="16,0"/>
+                                <Button Content="Удалить"
+                                        Click="DeleteSelectedParticipation_Click"
+                                        Style="{StaticResource DangerButtonStyle}"
+                                        Padding="14,7"/>
+                                <Button Content="+ Добавить"
+                                        Click="AddParticipation_Click"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Margin="16,0,0,0" Padding="16,7"/>
+                            </StackPanel>
+                        </Border>
+
+                        <DataGrid x:Name="dgParticipation" Grid.Row="1"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  BorderThickness="0"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E8EBF0"
+                                  CanUserResizeRows="False"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  RowHeight="40">
+
+                            <!-- Стиль заголовка группы -->
+                            <DataGrid.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="GroupItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="GroupItem">
+                                                        <StackPanel>
+                                                            <!-- Заголовок группы -->
+                                                            <Border Background="#EEF0FA"
+                                                                    BorderBrush="#C8CEF0"
+                                                                    BorderThickness="0,0,0,1"
+                                                                    Padding="16,0">
+                                                                <Grid Height="38">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0"
+                                                                               Text="{Binding Name}"
+                                                                               FontFamily="Segoe UI Semibold"
+                                                                               FontSize="13"
+                                                                               Foreground="#3A4580"
+                                                                               VerticalAlignment="Center"/>
+                                                                    <Border Grid.Column="1"
+                                                                            Background="#C8CEF0"
+                                                                            CornerRadius="10"
+                                                                            Padding="8,2"
+                                                                            VerticalAlignment="Center">
+                                                                        <TextBlock FontFamily="Segoe UI Semibold"
+                                                                                   FontSize="11"
+                                                                                   Foreground="#3A4580">
+                                                                            <Run Text="{Binding ItemCount, Mode=OneWay}"/>
+                                                                            <Run Text="уч."/>
+                                                                        </TextBlock>
+                                                                    </Border>
+                                                                </Grid>
+                                                            </Border>
+                                                            <!-- Строки группы -->
+                                                            <ItemsPresenter/>
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </DataGrid.GroupStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"        Binding="{Binding RowNumber}"   Width="50"/>
+                                <DataGridTextColumn Header="Участник" Binding="{Binding student_FIO}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- ── АРХИВ ─────────────────────────────────────────── -->
+                <TabItem x:Name="tabArchive">
+                    <Grid Background="#F5F6F8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="White"
+                                BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                                Padding="20,12">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="tbSearchArchive"
+                                         Style="{StaticResource SearchBoxStyle}"
+                                         Padding="10,7"
+                                         TextChanged="tbSearchArchive_TextChanged"/>
+                                <Button Content="Сброс"
+                                        Click="ClearArchiveFilter_Click"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Margin="8,0,0,0" Padding="12,7"/>
+                                <TextBlock x:Name="tbArchiveCount"
+                                           VerticalAlignment="Center"
+                                           Foreground="#6B7280" FontSize="12"
+                                           Margin="16,0,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <DataGrid x:Name="dgArchive" Grid.Row="1"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  BorderThickness="0"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E8EBF0"
+                                  CanUserResizeRows="False"
+                                  SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                                  RowHeight="40"
+                                  Opacity="0.7">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№"           Binding="{Binding RowNumber}"                       Width="45"/>
+                                <DataGridTextColumn Header="Название"    Binding="{Binding event_name}"                      Width="2*"/>
+                                <DataGridTextColumn Header="Дата"        Binding="{Binding date_e, StringFormat=dd.MM.yyyy}" Width="95"/>
+                                <DataGridTextColumn Header="Время"       Binding="{Binding time_e}"                          Width="75"/>
+                                <DataGridTextColumn Header="Место"       Binding="{Binding place}"                           Width="*"/>
+                                <DataGridTextColumn Header="Организатор" Binding="{Binding organizer_FIO}"                   Width="1.5*"/>
+                                <DataGridTextColumn Header="Тип"         Binding="{Binding type_e}"                          Width="*"/>
+                                <DataGridTextColumn Header="Участников"  Binding="{Binding participants_count}"              Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock Grid.Row="2"
+                                   Text="Прошедшие мероприятия · только просмотр"
+                                   Foreground="#9CA3AF" FontSize="11"
+                                   Margin="20,8,0,8"/>
+                    </Grid>
+                </TabItem>
+
+            </TabControl>
+
+            <!-- Статус-бар -->
+            <Border Grid.Row="2" Background="White"
+                    BorderBrush="#E8EBF0" BorderThickness="0,1,0,0"
+                    Padding="20,8">
+                <TextBlock Foreground="#9CA3AF" FontSize="11"
+                           Text="School Event — система учёта школьных мероприятий"/>
+            </Border>
+
+        </Grid>
+    </Grid>
+</Window>

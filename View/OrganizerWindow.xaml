@@ -1,0 +1,222 @@
+<Window x:Class="SchoolEventApp.OrganizerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Мои мероприятия — Организатор"
+        Height="700" Width="1000"
+        MinWidth="800" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        FontFamily="Segoe UI"
+        Background="#F5F6F8">
+
+    <Window.Resources>
+        <ResourceDictionary Source="../Style/AppStyles.xaml"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Шапка -->
+            <RowDefinition Height="56"/>
+            <!-- Тулбар -->
+            <RowDefinition Height="Auto"/>
+            <!-- Таблица -->
+            <RowDefinition Height="*"/>
+            <!-- Статусбар -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ── ШАПКА ──────────────────────────────────────────────── -->
+        <Border Grid.Row="0" Background="#2D3142">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Мои мероприятия"
+                           Foreground="White" FontFamily="Segoe UI Semibold"
+                           FontSize="17" VerticalAlignment="Center"/>
+
+                <TextBlock x:Name="tbCurrentUser" Grid.Column="1"
+                           Foreground="#8A94A8" FontSize="13"
+                           VerticalAlignment="Center" Margin="20,0,0,0"/>
+
+                <Button Grid.Column="2" Content="Обновить"
+                        Click="Refresh_Click"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Foreground="White" BorderBrush="#4A5270"
+                        Background="Transparent"
+                        Padding="14,7" Margin="0,0,8,0"/>
+
+                <Button Grid.Column="3" Content="Выйти"
+                        Click="Logout_Click"
+                        Style="{StaticResource DangerButtonStyle}"
+                        Padding="14,7"/>
+            </Grid>
+        </Border>
+
+        <!-- ── ТАБЫ ───────────────────────────────────────────────── -->
+        <Border Grid.Row="1" Background="White"
+                BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                Padding="20,0">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="btnTabUpcoming" Content="Предстоящие"
+                        Click="TabUpcoming_Click"
+                        Height="48" Padding="4,0" Margin="0,0,24,0"
+                        Background="Transparent" BorderThickness="0,0,0,2"
+                        BorderBrush="#4F5D9E"
+                        Foreground="#4F5D9E" FontFamily="Segoe UI Semibold"
+                        FontSize="13" Cursor="Hand"/>
+                <Button x:Name="btnTabArchive" Content="Архив"
+                        Click="TabArchive_Click"
+                        Height="48" Padding="4,0"
+                        Background="Transparent" BorderThickness="0,0,0,2"
+                        BorderBrush="Transparent"
+                        Foreground="#9CA3AF" FontSize="13" Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── КОНТЕНТ ────────────────────────────────────────────── -->
+        <Grid Grid.Row="2">
+
+            <!-- ПРЕДСТОЯЩИЕ -->
+            <Grid x:Name="panelUpcoming">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Тулбар поиска -->
+                <Border Grid.Row="0" Background="White"
+                        BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                        Padding="20,10">
+                    <DockPanel>
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left"
+                                    VerticalAlignment="Center">
+                            <TextBox x:Name="tbSearch"
+                                     Style="{StaticResource SearchBoxStyle}"
+                                     Padding="10,7"
+                                     TextChanged="tbSearch_TextChanged"/>
+                            <Button Content="Сброс"
+                                    Click="ClearSearch_Click"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Margin="8,0,0,0" Padding="12,7"/>
+                            <TextBlock x:Name="tbCount"
+                                       VerticalAlignment="Center"
+                                       Foreground="#9CA3AF" FontSize="12"
+                                       Margin="16,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right"
+                                    HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button Content="+ Добавить"
+                                    Click="AddEvent_Click"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Padding="16,7" Margin="0,0,8,0"/>
+                            <Button Content="Редактировать"
+                                    Click="EditEvent_Click"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Padding="14,7" Margin="0,0,8,0"/>
+                            <Button Content="Участники"
+                                    Click="ShowParticipants_Click"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Padding="14,7"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <!-- Таблица -->
+                <DataGrid x:Name="dgEvents" Grid.Row="1"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          BorderThickness="0"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E8EBF0"
+                          CanUserResizeRows="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          RowHeight="40"
+                          FontSize="13"
+                          MouseDoubleClick="dgEvents_MouseDoubleClick">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№"          Binding="{Binding RowNumber}"                       Width="50"/>
+                        <DataGridTextColumn Header="Название"   Binding="{Binding event_name}"                      Width="*"/>
+                        <DataGridTextColumn Header="Дата"       Binding="{Binding date_e, StringFormat=dd.MM.yyyy}" Width="100"/>
+                        <DataGridTextColumn Header="Время"      Binding="{Binding time_e}"                          Width="80"/>
+                        <DataGridTextColumn Header="Место"      Binding="{Binding place}"                           Width="180"/>
+                        <DataGridTextColumn Header="Тип"        Binding="{Binding type_e}"                          Width="120"/>
+                        <DataGridTextColumn Header="Участников" Binding="{Binding participants_count}"              Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+            </Grid>
+
+            <!-- АРХИВ -->
+            <Grid x:Name="panelArchive" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="White"
+                        BorderBrush="#E8EBF0" BorderThickness="0,0,0,1"
+                        Padding="20,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="tbSearchArchive"
+                                 Style="{StaticResource SearchBoxStyle}"
+                                 Padding="10,7"
+                                 TextChanged="tbSearchArchive_TextChanged"/>
+                        <Button Content="Сброс"
+                                Click="ClearArchiveFilter_Click"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Margin="8,0,0,0" Padding="12,7"/>
+                        <TextBlock x:Name="tbArchiveCount"
+                                   VerticalAlignment="Center"
+                                   Foreground="#9CA3AF" FontSize="12"
+                                   Margin="16,0,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <DataGrid x:Name="dgArchive" Grid.Row="1"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          BorderThickness="0"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E8EBF0"
+                          CanUserResizeRows="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          RowHeight="40"
+                          FontSize="13"
+                          Opacity="0.75">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№"          Binding="{Binding RowNumber}"                       Width="50"/>
+                        <DataGridTextColumn Header="Название"   Binding="{Binding event_name}"                      Width="*"/>
+                        <DataGridTextColumn Header="Дата"       Binding="{Binding date_e, StringFormat=dd.MM.yyyy}" Width="100"/>
+                        <DataGridTextColumn Header="Время"      Binding="{Binding time_e}"                          Width="80"/>
+                        <DataGridTextColumn Header="Место"      Binding="{Binding place}"                           Width="180"/>
+                        <DataGridTextColumn Header="Тип"        Binding="{Binding type_e}"                          Width="120"/>
+                        <DataGridTextColumn Header="Участников" Binding="{Binding participants_count}"              Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Border Grid.Row="2" Background="White"
+                        BorderBrush="#E8EBF0" BorderThickness="0,1,0,0"
+                        Padding="20,10">
+                    <TextBlock Text="Прошедшие мероприятия · только просмотр"
+                               Foreground="#9CA3AF" FontSize="11"/>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ── СТАТУСБАР ──────────────────────────────────────────── -->
+        <Border Grid.Row="3" Background="White"
+                BorderBrush="#E8EBF0" BorderThickness="0,1,0,0"
+                Padding="20,7">
+            <TextBlock Foreground="#9CA3AF" FontSize="11"
+                       Text="School Event — кабинет организатора"/>
+        </Border>
+
+    </Grid>
+</Window>

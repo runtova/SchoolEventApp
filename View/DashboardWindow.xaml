@@ -1,0 +1,234 @@
+<Window x:Class="SchoolEventApp.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        Title="Dashboard — Аналитика" Height="720" Width="1100"
+        WindowStartupLocation="CenterOwner" WindowState="Maximized">
+
+    <Window.Resources>
+        <Style x:Key="FilterLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"          Value="11"/>
+            <Setter Property="Foreground"        Value="White"/>
+            <Setter Property="Opacity"           Value=".7"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin"            Value="0,0,6,0"/>
+        </Style>
+        <Style x:Key="GreenBtn" TargetType="Button">
+            <Setter Property="Height"          Value="28"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="Foreground"      Value="#1e5943"/>
+            <Setter Property="Padding"         Value="16,0"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#E8F5EE"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="GhostBtn" TargetType="Button">
+            <Setter Property="Height"          Value="28"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#4A8A70"/>
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#A8D5C2"/>
+            <Setter Property="Padding"         Value="14,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#1A6B4A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ШАПКА -->
+        <Border Grid.Row="0" Background="#1e5943">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                <Ellipse Width="7" Height="7" Fill="#6EDBB0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Аналитика мероприятий" Foreground="White"
+                           FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ФИЛЬТРЫ -->
+        <Border Grid.Row="1" Background="#174838"
+                BorderBrush="#0F3529" BorderThickness="0,0,0,1" Padding="20,10">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Left">
+                    <TextBlock Text="Год:" Style="{StaticResource FilterLabel}"/>
+                    <ComboBox x:Name="cbSchoolYear" Width="115" Height="28"
+                              VerticalContentAlignment="Center" FontSize="12"
+                              SelectionChanged="SchoolYear_SelectionChanged" Margin="0,0,16,0"/>
+                    <TextBlock Text="Дата с:" Style="{StaticResource FilterLabel}"/>
+                    <DatePicker x:Name="dpFrom" Width="120" Height="28"
+                                FontSize="12" Margin="0,0,10,0"/>
+                    <TextBlock Text="по:" Style="{StaticResource FilterLabel}"/>
+                    <DatePicker x:Name="dpTo" Width="120" Height="28"
+                                FontSize="12" Margin="0,0,16,0"/>
+                    <TextBlock Text="Тип:" Style="{StaticResource FilterLabel}"/>
+                    <ComboBox x:Name="cbType" Width="150" Height="28"
+                              VerticalContentAlignment="Center" FontSize="12"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            HorizontalAlignment="Right" DockPanel.Dock="Right">
+                    <Button Content="Применить" Click="ApplyFilter_Click"
+                            Style="{StaticResource GreenBtn}" Margin="0,0,8,0"/>
+                    <Button Content="Сброс" Click="ResetFilter_Click"
+                            Style="{StaticResource GhostBtn}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- МЕТРИКИ -->
+        <Border Grid.Row="2" Background="#F4FAF7" Padding="14,12,14,0">
+            <UniformGrid Columns="4">
+                <Border Margin="0,0,6,0" Background="White" CornerRadius="8" Padding="14,12"
+                        BorderBrush="#1e5943" BorderThickness="3,1,1,1">
+                    <StackPanel>
+                        <TextBlock Text="ВСЕГО МЕРОПРИЯТИЙ" FontSize="10" Foreground="#9CA3AF" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="lblTotalEvents" Text="—" FontSize="28"
+                                   FontWeight="SemiBold" Foreground="#1e5943"/>
+                        <TextBlock x:Name="lblAvgPerEvent" Text="" FontSize="11"
+                                   Foreground="#9CA3AF" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="6,0" Background="White" CornerRadius="8" Padding="14,12"
+                        BorderBrush="#3B82F6" BorderThickness="3,1,1,1">
+                    <StackPanel>
+                        <TextBlock Text="ВСЕГО УЧАСТНИКОВ" FontSize="10" Foreground="#9CA3AF" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="lblTotalParticipants" Text="—" FontSize="28"
+                                   FontWeight="SemiBold" Foreground="#3B82F6"/>
+                        <TextBlock x:Name="lblAvgParticipants" Text="" FontSize="11"
+                                   Foreground="#9CA3AF" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="6,0" Background="White" CornerRadius="8" Padding="14,12"
+                        BorderBrush="#F59E0B" BorderThickness="3,1,1,1">
+                    <StackPanel>
+                        <TextBlock Text="ПЕРВОЕ МЕРОПРИЯТИЕ" FontSize="10" Foreground="#9CA3AF" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="lblMinDate" Text="—" FontSize="20"
+                                   FontWeight="SemiBold" Foreground="#B45309"/>
+                        <TextBlock x:Name="lblMinName" Text="" FontSize="11"
+                                   Foreground="#9CA3AF" Margin="0,3,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="6,0,0,0" Background="White" CornerRadius="8" Padding="14,12"
+                        BorderBrush="#8B5CF6" BorderThickness="3,1,1,1">
+                    <StackPanel>
+                        <TextBlock Text="ПОСЛЕДНЕЕ МЕРОПРИЯТИЕ" FontSize="10" Foreground="#9CA3AF" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="lblMaxDate" Text="—" FontSize="20"
+                                   FontWeight="SemiBold" Foreground="#6D28D9"/>
+                        <TextBlock x:Name="lblMaxName" Text="" FontSize="11"
+                                   Foreground="#9CA3AF" Margin="0,3,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </Border>
+
+        <!-- ГРАФИКИ -->
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Background="#F4FAF7">
+            <StackPanel Margin="14,12,14,14">
+
+                <!-- Ряд 1: бар + пирог -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="340"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Горизонтальные бары по типу -->
+                    <Border Grid.Column="0" Background="White" CornerRadius="8"
+                            BorderBrush="#E8EBF0" BorderThickness="1"
+                            Padding="16" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="Мероприятий по типу" FontSize="13"
+                                       FontWeight="SemiBold" Foreground="#1F2937" Margin="0,0,0,8"/>
+                            <lvc:CartesianChart x:Name="chartByType" Height="260"
+                                                TooltipPosition="Hidden"
+                                                AnimationsSpeed="0:0:0.4"
+                                                LegendPosition="Right"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Пирог -->
+                    <Border Grid.Column="1" Background="White" CornerRadius="8"
+                            BorderBrush="#E8EBF0" BorderThickness="1" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Доля по типам" FontSize="13"
+                                       FontWeight="SemiBold" Foreground="#1F2937" Margin="0,0,0,8"/>
+                            <lvc:PieChart x:Name="chartPie" Height="260"
+                                          LegendPosition="Bottom"
+                                          AnimationsSpeed="0:0:0.4"
+                                          InitialRotation="-90"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Ряд 2: линейный по датам -->
+                <Border Background="White" CornerRadius="8"
+                        BorderBrush="#E8EBF0" BorderThickness="1"
+                        Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Активность по датам" FontSize="13"
+                                   FontWeight="SemiBold" Foreground="#1F2937" Margin="0,0,0,8"/>
+                        <lvc:CartesianChart x:Name="chartByDate" Height="220"
+                                            TooltipPosition="Top"
+                                            AnimationsSpeed="0:0:0.4"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Ряд 3: топ организаторов -->
+                <Border Background="White" CornerRadius="8"
+                        BorderBrush="#E8EBF0" BorderThickness="1"
+                        Padding="16" Margin="0,0,0,4">
+                    <StackPanel>
+                        <TextBlock Text="Топ организаторов по числу участников" FontSize="13"
+                                   FontWeight="SemiBold" Foreground="#1F2937" Margin="0,0,0,8"/>
+                        <lvc:CartesianChart x:Name="chartTopOrgs" MinHeight="200"
+                                            TooltipPosition="Hidden"
+                                            LegendPosition="Right"
+                                            AnimationsSpeed="0:0:0.4"/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
